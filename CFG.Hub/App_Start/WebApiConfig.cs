@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿// <copyright file="WebApiConfig.cs" company="Broomscom.com">
+//     Copyright (c) Broomscom.com
+// </copyright>
 
 namespace CFG.Hub
 {
+    using System.Web.Http;
+
+    /// <summary>
+    /// Standard wire up
+    /// </summary>
     public static class WebApiConfig
     {
-        public static void Register(HttpConfiguration config)
-        {            
+        /// <summary>
+        /// Registers endpoints.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public static void Register(HttpConfiguration configuration)
+        {
             // Map all routes
-            config.MapHttpAttributeRoutes();            
+            configuration.MapHttpAttributeRoutes();            
         }
     }
 }

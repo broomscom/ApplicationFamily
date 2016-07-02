@@ -20,11 +20,18 @@ namespace CFG.Hub.Attributes
         protected override bool IsAuthorized(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
             // Ensure the token
-            if (actionContext.Request.Headers.GetValues("token").FirstOrDefault() == ConfigurationManager.AppSettings["AuthorizationToken"])
+            try
             {
-                return true;
+                if (actionContext.Request.Headers.GetValues("token").FirstOrDefault() == ConfigurationManager.AppSettings["AuthorizationToken"])
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch
             {
                 return false;
             }
@@ -36,7 +43,8 @@ namespace CFG.Hub.Attributes
             actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.OK, new ServiceResponse()
             {
                 Type = ResponseType.Error,
-                Message = k
+                Message = "Authorization failed for configuration hub",
+                Payload = null
             });
         }
     }
