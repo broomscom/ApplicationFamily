@@ -9,6 +9,9 @@ using System.Web.Http.Filters;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
+using System.Configuration;
+using CFG.Hub.Models;
 
 namespace CFG.Hub.Attributes
 {
@@ -16,7 +19,25 @@ namespace CFG.Hub.Attributes
     {
         protected override bool IsAuthorized(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
-            return true;
+            // Ensure the token
+            if (actionContext.Request.Headers.GetValues("token").FirstOrDefault() == ConfigurationManager.AppSettings["AuthorizationToken"])
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        {
+            // Report unauthorized
+            actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.OK, new ServiceResponse()
+            {
+                Type = ResponseType.Error,
+                Message = k
+            });
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using CFG.Hub.Attributes;
 using Newtonsoft.Json;
+using CFG.Hub.Models;
 
 namespace CFG.Hub.Controllers
 {
@@ -14,7 +15,12 @@ namespace CFG.Hub.Controllers
         [Route("Dock/Ping"), HttpGet, ConfigHubAuthorize]
         public HttpResponseMessage Ping()
         {            
-            return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(ActionContext.RequestContext.Principal));
+            return Request.CreateResponse(HttpStatusCode.OK, new ServiceResponse()
+            {
+                Type = ResponseType.Success,
+                Message = "Pong",
+                Payload = null
+            });
         }
     }
 }
