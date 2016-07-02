@@ -1,6 +1,4 @@
-﻿// <copyright file="WebApiConfig.cs" company="Broomscom.com">
-//     Copyright (c) Broomscom.com
-// </copyright>
+﻿// <copyright file="WebApiConfig.cs" company="Broomscom.com">Copyright (c) Broomscom.com</copyright>
 
 namespace CFG.Hub
 {
@@ -14,7 +12,7 @@ namespace CFG.Hub
         /// <summary>
         /// Registers endpoints.
         /// </summary>
-        /// <param name="config">The configuration.</param>
+        /// <param name="configuration">The configuration.</param>
         public static void Register(HttpConfiguration configuration)
         {
             // Map all routes
