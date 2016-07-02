@@ -6,8 +6,7 @@ namespace CFG.Hub.Controllers
     using System.Net.Http;
     using System.Web.Http;
     using Attributes;
-    using Models;
-
+    using Docker.Models;
     /// <summary>
     /// Configuration hub endpoint controller.
     /// </summary>
@@ -39,7 +38,14 @@ namespace CFG.Hub.Controllers
         [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Resolve(string path)
         {
-            // TODO
+            return Request.CreateResponse(
+                HttpStatusCode.OK,
+                new ServiceResponse()
+                {
+                    Type = ResponseType.Success,
+                    Message = "Pong",
+                    Payload = null
+                });
         }
 
         /// <summary>
@@ -51,7 +57,14 @@ namespace CFG.Hub.Controllers
         [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Publish(string path, string value)
         {
-            // TODO
+            return Request.CreateResponse(
+                HttpStatusCode.OK,
+                new ServiceResponse()
+                {
+                    Type = ResponseType.Success,
+                    Message = "Pong",
+                    Payload = null
+                });
         }
 
         /// <summary>
@@ -62,7 +75,14 @@ namespace CFG.Hub.Controllers
         [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage ListChildren(string path)
         {
-            // TODO
+            return Request.CreateResponse(
+                HttpStatusCode.OK,
+                new ServiceResponse()
+                {
+                    Type = ResponseType.Success,
+                    Message = "Pong",
+                    Payload = null
+                });
         }
 
         /// <summary>
@@ -73,7 +93,14 @@ namespace CFG.Hub.Controllers
         [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Find(string pattern)
         {
-            // TODO
+            return Request.CreateResponse(
+                HttpStatusCode.OK,
+                new ServiceResponse()
+                {
+                    Type = ResponseType.Success,
+                    Message = "Pong",
+                    Payload = null
+                });
         }
     }
 }

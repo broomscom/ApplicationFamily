@@ -7,9 +7,8 @@ namespace CFG.Hub.Attributes
     using System.Net;
     using System.Net.Http;
     using System.Web.Http;
-    using System.Web.Http.Controllers;
-    using CFG.Hub.Models;
-
+    using System.Web.Http.Controllers;    
+    using Docker.Models;
     /// <summary>
     /// Authorization attribute
     /// </summary>

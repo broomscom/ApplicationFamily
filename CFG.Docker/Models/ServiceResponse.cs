@@ -1,6 +1,10 @@
-﻿// <copyright file="ServiceResponse.cs" company="Broomscom.com">Copyright (c) Broomscom.com</copyright>
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CFG.Hub.Models
+namespace CFG.Docker.Models
 {
     /// <summary>
     /// Response type enumerator

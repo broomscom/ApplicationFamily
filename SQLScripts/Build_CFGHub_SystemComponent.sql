@@ -1,4 +1,4 @@
-USE [DB_101375_datastore]
+USE [Paste Configuration Hub Database Name Here]
 GO
 SET ANSI_NULLS ON
 GO
