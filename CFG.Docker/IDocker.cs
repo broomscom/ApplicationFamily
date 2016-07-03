@@ -17,5 +17,7 @@ namespace CFG.Docker
         List<string> ListChildren(string ofConfigurationPath);
 
         List<string> Find(string configurationSearchPattern);
+
+        void Setup(string serverNameAndPort, string token, bool useHttps);
     }
 }

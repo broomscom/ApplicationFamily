@@ -41,11 +41,11 @@ namespace CFG.Hub.Controllers
             // Return pong response
             try
             {
-                return GenerateSuccessResponse("CFGDocker(Server): Pong", null);
+                return GenerateSuccessResponse("Pong", null);
             }
             catch (Exception err)
             {
-                return GenerateExceptionResponse("CFGDocker(Server): Unexpected failure" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
+                return GenerateExceptionResponse("Unexpected failure" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
             }
         }
 
@@ -67,12 +67,12 @@ namespace CFG.Hub.Controllers
                     context.SaveChanges();
 
                     // Respond
-                    return GenerateSuccessResponse("CFGDocker(Server): Sending configuration atom '" + path + "'", configAtom.Value);
+                    return GenerateSuccessResponse("Sending configuration atom '" + path + "'", configAtom.Value);
                 }                
             }
             catch (Exception err)
             {
-                return GenerateExceptionResponse("CFGDocker(Server): Failed to find resolve path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
+                return GenerateExceptionResponse("Failed to find resolve path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
             }
         }
 
@@ -98,12 +98,12 @@ namespace CFG.Hub.Controllers
                     context.SaveChanges();
 
                     // Response
-                    return GenerateSuccessResponse("CFGDocker(Server): Publish succeeded", null);
+                    return GenerateSuccessResponse("Publish succeeded", null);
                 }                
             }
             catch (Exception err)
             {
-                return GenerateExceptionResponse("CFGDocker(Server): Failed to find publish path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
+                return GenerateExceptionResponse("Failed to find publish path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
             }
         }
 
@@ -198,7 +198,7 @@ namespace CFG.Hub.Controllers
                     if (currentAtom == null)
                     {
                         // Must have the tail to store
-                        throw new Exception("Invalid path");
+                        throw new Exception("Invalid atom '" + atomName + "'");
                     }
                 }
             }            
