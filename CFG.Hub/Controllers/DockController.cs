@@ -34,8 +34,8 @@ namespace CFG.Hub.Controllers
         /// <summary>
         /// Resolves a configuration value (always string).
         /// </summary>
-        /// <returns>Specified value</returns>
-        [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
+        /// <returns>Specified value (always string)</returns>
+        [Route("Dock/Resolve"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Resolve(string path)
         {
             return Request.CreateResponse(
@@ -54,7 +54,7 @@ namespace CFG.Hub.Controllers
         /// <param name="path">The path.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
+        [Route("Dock/Publish"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Publish(string path, string value)
         {
             return Request.CreateResponse(
@@ -72,7 +72,7 @@ namespace CFG.Hub.Controllers
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns></returns>
-        [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
+        [Route("Dock/ListChildren"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage ListChildren(string path)
         {
             return Request.CreateResponse(
@@ -90,7 +90,7 @@ namespace CFG.Hub.Controllers
         /// </summary>
         /// <param name="pattern">The pattern.</param>
         /// <returns></returns>
-        [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize]
+        [Route("Dock/Find"), HttpPost, ConfigHubAuthorize]
         public HttpResponseMessage Find(string pattern)
         {
             return Request.CreateResponse(
