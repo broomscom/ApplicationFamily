@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a96402b6a30740f497df5fa99f3de566" Name="Diagram1">
+        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_ConfigAtom" Width="3" PointX="4.125" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_SystemComponent" Width="2.375" PointX="0.75" PointY="1.125" IsExpanded="true" />
+        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" ManuallyRouted="false" />
+        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
