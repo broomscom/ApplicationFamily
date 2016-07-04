@@ -17,7 +17,7 @@ namespace CFG.Hub
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CFGHub_ConfigAtom()
         {
-            this.CFGHub_ConfigAtom1 = new HashSet<CFGHub_ConfigAtom>();
+            this.Children = new HashSet<CFGHub_ConfigAtom>();
         }
     
         public System.Guid ID { get; set; }
@@ -28,7 +28,7 @@ namespace CFG.Hub
     
         public virtual CFGHub_SystemComponent CFGHub_SystemComponent { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CFGHub_ConfigAtom> CFGHub_ConfigAtom1 { get; set; }
-        public virtual CFGHub_ConfigAtom CFGHub_ConfigAtom2 { get; set; }
+        public virtual ICollection<CFGHub_ConfigAtom> Children { get; set; }
+        public virtual CFGHub_ConfigAtom Parent { get; set; }
     }
 }

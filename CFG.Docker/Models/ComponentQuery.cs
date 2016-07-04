@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CFG.Docker.Models
 {
-    public class ComponentQuery
+    public class ConfigHubQuery
     {        
-        public string ComponentNamePattern { get; set; }
-        public string ComponentDescriptionPattern { get; set; }
+        public string NamePattern { get; set; }
 
+        public string ValuePattern { get; set; }
     }
 }

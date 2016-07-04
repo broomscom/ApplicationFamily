@@ -12,10 +12,15 @@ namespace CFG.Hub.Attributes
 
     public class ConfigHubAuthorize : AuthorizeAttribute
     {
+        #region Enumeration
         public enum ConfigHubClaims { Unset, Read, Publish }
+        #endregion
 
+        #region State
         private ConfigHubClaims Claim = ConfigHubClaims.Unset;
+        #endregion
 
+        #region Authorization
         public ConfigHubAuthorize(ConfigHubClaims claim)
         {
             // Set the claim for authorize
@@ -55,5 +60,6 @@ namespace CFG.Hub.Attributes
                 Payload = null
             });
         }
+        #endregion
     }
 }

@@ -85,8 +85,8 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="CFGHub_SystemComponent" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_SystemComponent" />
-          <NavigationProperty Name="CFGHub_ConfigAtom1" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_ConfigAtom1" />
-          <NavigationProperty Name="CFGHub_ConfigAtom2" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom1" ToRole="CFGHub_ConfigAtom" />
+          <NavigationProperty Name="Children" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_ConfigAtom1" />
+          <NavigationProperty Name="Parent" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom1" ToRole="CFGHub_ConfigAtom" />
         </EntityType>
         <EntityType Name="CFGHub_SystemComponent">
           <Key>

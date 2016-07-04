@@ -62,7 +62,66 @@ namespace CFG.Docker
         }
         #endregion
 
-        #region Merchant
+        #region Component Merchant        
+        public void RegisterComponent(string componentName)
+        {
+            // Execute
+            string stringOutput = null;
+            ExecuteConfigQuery("RegisterComponent", componentName, null, PublishToken, out stringOutput);            
+        }
+        public void DeleteComponent(string componentName)
+        {
+            // Execute
+            string stringOutput = null;
+            ExecuteConfigQuery("DeleteComponent", componentName, null, PublishToken, out stringOutput);
+        }
+        public List<string> ListComponents()
+        {
+            // Execute
+            string stringOutput = null;
+            return ExecuteConfigQuery("ListComponents", null, null, ReadToken, out stringOutput);
+        }
+        #endregion        
+
+        #region Atom Merchant
+        public void PublishConfigurationAtom(string path, string value)
+        {
+            // Execute
+            string stringOutput = null;
+            ExecuteConfigQuery("PublishConfigurationAtom", path, value, PublishToken, out stringOutput);
+        }
+        public void DeleteConfigurationAtom(string atomPath)
+        {
+            // Execute
+            string stringOutput = null;
+            ExecuteConfigQuery("DeleteConfigurationAtom", atomPath, null, PublishToken, out stringOutput);
+        }
+        public List<string> ListSubAtoms(string atomPath)
+        {
+            // Execute
+            string stringOutput = null;
+            return ExecuteConfigQuery("ListSubAtoms", atomPath, null, ReadToken, out stringOutput);
+        }
+        public string ResolveAtomAsString(string atomPath)
+        {
+            // Execute
+            string stringOutput = null;
+            ExecuteConfigQuery("ResolveAtomAsString", atomPath, null, ReadToken, out stringOutput);
+            return stringOutput;
+        }
+        public T Resolve<T>(string atomPath)
+        {
+            // Execute
+            string resolvedString = ResolveAtomAsString(atomPath);
+
+            // Super resolver
+
+
+            return default(T);
+        }
+        #endregion
+
+        #region Diagnostic Merchant
         public string Ping()
         {
             // Build client
@@ -99,47 +158,59 @@ namespace CFG.Docker
                 }
             }
         }
-
-        public void RegisterComponent(string componentName)
-        {
-            // Execute
-            ExecuteComponentQuery(componentName, "RegisterComponent", null);            
-        }
-
-        public void DeleteComponent(string componentName)
-        {
-            // Execute
-            ExecuteComponentQuery(componentName, "DeleteComponent", null);
-        }
         #endregion
 
         #region Cores
-        private void ExecuteComponentQuery(string componentNamePattern, string componentAction, string componentDescriptionPattern)
+        private List<string> ExecuteConfigQuery(string componentActionURIPart, string componentNamePattern, string valuePattern, string useToken, out string retunStringValue)
         {
+            // Declare string list
+            List<string> returnStringList = new List<string>();
+
+            // Default output string
+            retunStringValue = null;
+
             // Declare component definition
-            ComponentQuery thisComponentQuery = null;
+            ConfigHubQuery thisComponentQuery = null;
 
             // Build client
             using (HttpClient client = new HttpClient())
             {
                 // Client setup                
-                SetupClient(client, PublishToken);
+                SetupClient(client, useToken);
 
                 // Build component query
-                thisComponentQuery = new ComponentQuery();
-                thisComponentQuery.ComponentNamePattern = componentNamePattern;
-                thisComponentQuery.ComponentDescriptionPattern = componentDescriptionPattern;
+                thisComponentQuery = new ConfigHubQuery();
+                thisComponentQuery.NamePattern = componentNamePattern;
+                thisComponentQuery.ValuePattern = valuePattern;
 
                 // Service call
                 ServiceResponse response = null;
                 try
                 {
                     // Service transaction
-                    response = client.PostAsync<ComponentQuery>(
-                        BaseURI + componentAction,
-                        thisComponentQuery,
-                        new JsonMediaTypeFormatter())
-                        .Result.Content.ReadAsAsync<ServiceResponse>().Result;
+                    response = client.PostAsync<ConfigHubQuery>(
+                            BaseURI + componentActionURIPart,
+                            thisComponentQuery,
+                            new JsonMediaTypeFormatter())
+                            .Result.Content.ReadAsAsync<ServiceResponse>().Result;
+                    
+                    // Set returns if applicable
+                    try
+                    {
+                        retunStringValue = response.Payload.ToString();
+                    }
+                    catch
+                    {
+                        // Don't care
+                    }
+                    try
+                    {                        
+                        returnStringList = JsonConvert.DeserializeObject<List<string>>(response.Payload.ToString());                        
+                    }
+                    catch
+                    {
+                        // Don't care
+                    }
                 }
                 catch (Exception err)
                 {
@@ -153,13 +224,16 @@ namespace CFG.Docker
                     throw new CFGDockerException(response.Message, null);
                 }
             }
+
+            // Return
+            return returnStringList;
         }
-        private void SetupClient(HttpClient toSetup, string usingToken)
+        private void SetupClient(HttpClient toSetup, string useToken)
         {
             // Setup the client
-            toSetup.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            toSetup.DefaultRequestHeaders.Add("token", usingToken);
-        }
+            toSetup.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));      
+            toSetup.DefaultRequestHeaders.Add("token", useToken);
+        }                       
         #endregion
     }
 }

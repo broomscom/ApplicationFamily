@@ -11,7 +11,21 @@ namespace CFG.Docker
     {
         string Ping();
 
-        void RegisterComponent(string componentName);        
+        void RegisterComponent(string componentName);
+
+        void DeleteComponent(string componentName);
+
+        void PublishConfigurationAtom(string atomPath, string value);
+
+        void DeleteConfigurationAtom(string atomPath);
+
+        List<string> ListComponents();
+
+        List<string> ListSubAtoms(string atomPath);
+
+        string ResolveAtomAsString(string atomPath);
+
+        T Resolve<T>(string atomPath);
 
         void Setup(string serverNameAndPort, string readerToken, string publisherToken, bool useHttps);
     }
