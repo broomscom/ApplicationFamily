@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ConfigHubEFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ConfigHubEFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="CFGHub_ConfigAtom">
           <Key>
             <PropertyRef Name="ID" />
@@ -20,9 +20,7 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Status" Type="varchar" MaxLength="1" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="255" Nullable="false" />
-          <Property Name="Version" Type="varchar" MaxLength="255" />
           <Property Name="Description" Type="text" />
         </EntityType>
         <Association Name="FK_CFGHub_ConfigAtom_CFGHub-Component">
@@ -61,11 +59,22 @@
             <End Role="CFGHub_ConfigAtom1" EntitySet="CFGHub_ConfigAtom" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ConfigHubEFModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ConfigHubEFEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CFGHub_ConfigAtom" EntityType="ConfigHubEFModel.CFGHub_ConfigAtom" />
+          <EntitySet Name="CFGHub_SystemComponent" EntityType="ConfigHubEFModel.CFGHub_SystemComponent" />
+          <AssociationSet Name="FK_CFGHub_ConfigAtom_CFGHub_Component" Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component">
+            <End Role="CFGHub_SystemComponent" EntitySet="CFGHub_SystemComponent" />
+            <End Role="CFGHub_ConfigAtom" EntitySet="CFGHub_ConfigAtom" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CFGHub_ConfigAtom_CFGHub_Parent" Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent">
+            <End Role="CFGHub_ConfigAtom" EntitySet="CFGHub_ConfigAtom" />
+            <End Role="CFGHub_ConfigAtom1" EntitySet="CFGHub_ConfigAtom" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="CFGHub_ConfigAtom">
           <Key>
             <PropertyRef Name="ID" />
@@ -73,26 +82,24 @@
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="ComponentID" Type="Guid" Nullable="false" />
           <Property Name="ParentID" Type="Guid" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="CFGHub_SystemComponent" Relationship="Self.FK_CFGHub_ConfigAtom_CFGHub_Component" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_SystemComponent" />
-          <NavigationProperty Name="CFGHub_ConfigAtom1" Relationship="Self.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_ConfigAtom1" />
-          <NavigationProperty Name="CFGHub_ConfigAtom2" Relationship="Self.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom1" ToRole="CFGHub_ConfigAtom" />
+          <NavigationProperty Name="CFGHub_SystemComponent" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_SystemComponent" />
+          <NavigationProperty Name="CFGHub_ConfigAtom1" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom" ToRole="CFGHub_ConfigAtom1" />
+          <NavigationProperty Name="CFGHub_ConfigAtom2" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" FromRole="CFGHub_ConfigAtom1" ToRole="CFGHub_ConfigAtom" />
         </EntityType>
         <EntityType Name="CFGHub_SystemComponent">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Guid" Nullable="false" />
-          <Property Name="Status" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Version" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="CFGHub_ConfigAtom" Relationship="Self.FK_CFGHub_ConfigAtom_CFGHub_Component" FromRole="CFGHub_SystemComponent" ToRole="CFGHub_ConfigAtom" />
+          <NavigationProperty Name="CFGHub_ConfigAtom" Relationship="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" FromRole="CFGHub_SystemComponent" ToRole="CFGHub_ConfigAtom" />
         </EntityType>
         <Association Name="FK_CFGHub_ConfigAtom_CFGHub_Component">
-          <End Role="CFGHub_SystemComponent" Type="Self.CFGHub_SystemComponent" Multiplicity="1" />
-          <End Role="CFGHub_ConfigAtom" Type="Self.CFGHub_ConfigAtom" Multiplicity="*" />
+          <End Type="ConfigHubEFModel.CFGHub_SystemComponent" Role="CFGHub_SystemComponent" Multiplicity="1" />
+          <End Type="ConfigHubEFModel.CFGHub_ConfigAtom" Role="CFGHub_ConfigAtom" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="CFGHub_SystemComponent">
               <PropertyRef Name="ID" />
@@ -103,8 +110,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CFGHub_ConfigAtom_CFGHub_Parent">
-          <End Role="CFGHub_ConfigAtom" Type="Self.CFGHub_ConfigAtom" Multiplicity="0..1" />
-          <End Role="CFGHub_ConfigAtom1" Type="Self.CFGHub_ConfigAtom" Multiplicity="*" />
+          <End Type="ConfigHubEFModel.CFGHub_ConfigAtom" Role="CFGHub_ConfigAtom" Multiplicity="0..1" />
+          <End Type="ConfigHubEFModel.CFGHub_ConfigAtom" Role="CFGHub_ConfigAtom1" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="CFGHub_ConfigAtom">
               <PropertyRef Name="ID" />
@@ -114,18 +121,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="ConfigHubEFEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="CFGHub_ConfigAtom" EntityType="Self.CFGHub_ConfigAtom" />
-          <EntitySet Name="CFGHub_SystemComponent" EntityType="Self.CFGHub_SystemComponent" />
-          <AssociationSet Name="FK_CFGHub_ConfigAtom_CFGHub_Component" Association="Self.FK_CFGHub_ConfigAtom_CFGHub_Component">
-            <End Role="CFGHub_SystemComponent" EntitySet="CFGHub_SystemComponent" />
-            <End Role="CFGHub_ConfigAtom" EntitySet="CFGHub_ConfigAtom" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CFGHub_ConfigAtom_CFGHub_Parent" Association="Self.FK_CFGHub_ConfigAtom_CFGHub_Parent">
-            <End Role="CFGHub_ConfigAtom" EntitySet="CFGHub_ConfigAtom" />
-            <End Role="CFGHub_ConfigAtom1" EntitySet="CFGHub_ConfigAtom" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -135,22 +130,20 @@
           <EntitySetMapping Name="CFGHub_ConfigAtom">
             <EntityTypeMapping TypeName="ConfigHubEFModel.CFGHub_ConfigAtom">
               <MappingFragment StoreEntitySet="CFGHub_ConfigAtom">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ComponentID" ColumnName="ComponentID" />
-                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+                <ScalarProperty Name="ComponentID" ColumnName="ComponentID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="CFGHub_SystemComponent">
             <EntityTypeMapping TypeName="ConfigHubEFModel.CFGHub_SystemComponent">
               <MappingFragment StoreEntitySet="CFGHub_SystemComponent">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

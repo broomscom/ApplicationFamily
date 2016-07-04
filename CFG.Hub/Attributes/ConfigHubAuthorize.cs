@@ -9,25 +9,26 @@ namespace CFG.Hub.Attributes
     using System.Web.Http;
     using System.Web.Http.Controllers;    
     using Docker.Models;
-    /// <summary>
-    /// Authorization attribute
-    /// </summary>
-    /// <seealso cref="System.Web.Http.AuthorizeAttribute" />
+
     public class ConfigHubAuthorize : AuthorizeAttribute
     {
-        /// <summary>
-        /// Indicates whether the specified transaction is authorized.
-        /// </summary>
-        /// <param name="actionContext">The context.</param>
-        /// <returns>
-        /// true if the transaction is authorized; otherwise, false.
-        /// </returns>
+        public enum ConfigHubClaims { Unset, Read, Publish }
+
+        private ConfigHubClaims Claim = ConfigHubClaims.Unset;
+
+        public ConfigHubAuthorize(ConfigHubClaims claim)
+        {
+            // Set the claim for authorize
+            Claim = claim;
+        }
+        
         protected override bool IsAuthorized(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
             // Ensure the token
             try
             {
-                if (actionContext.Request.Headers.GetValues("token").FirstOrDefault() == ConfigurationManager.AppSettings["AuthorizationToken"])
+                string tokenConfigName = Claim == ConfigHubClaims.Read ? "ReadToken" : "PublishToken";
+                if (actionContext.Request.Headers.GetValues("token").FirstOrDefault() == ConfigurationManager.AppSettings[tokenConfigName])
                 {
                     return true;
                 }
@@ -42,10 +43,6 @@ namespace CFG.Hub.Attributes
             }
         }
 
-        /// <summary>
-        /// Processes requests that fail authorization.
-        /// </summary>
-        /// <param name="actionContext">The context.</param>
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {
             // Report unauthorized

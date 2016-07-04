@@ -11,24 +11,30 @@ namespace CFG.Docker.Tests
         public void PingServiceTest()
         {
             // Create DOCKER instance
-            IDocker docker = new StandardConfigHubDocker();
-            docker.Setup("broomscom.com/CFG.Hub", "25E9BDF2-DF1E-42BD-BD58-1CAFFDC554A2", false);
+            IDocker dockerInstance = BuildStandardDockerInstance();
 
             // Assert
-            Assert.IsTrue(docker.Ping() == "Pong");
+            Assert.IsTrue(dockerInstance.Ping() == "Pong");
         }
 
         [TestMethod]
-        public void PublishValueTest()
+        public void RegisterComponentTest()
         {
             // Create DOCKER instance
-            IDocker docker = new StandardConfigHubDocker();
+            IDocker dockerInstance = BuildStandardDockerInstance();
 
             // Act
-            docker.Publish("Test Component 1.FirstValue", "True");
+            dockerInstance.RegisterComponent("    Component BETA  ");            
 
             // Assert
+        }
 
+        private IDocker BuildStandardDockerInstance()
+        {
+            // Build and return
+            IDocker docker = new StandardConfigHubDocker();
+            docker.Setup("http://localhost:53551/", "994BCF73-1E51-419D-B1A2-E316EFF6F008", "64B7A077-2D9A-437C-AFEF-AA46B6352B60", false);
+            return docker;
         }
     }
 }

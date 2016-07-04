@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,61 +13,153 @@ namespace CFG.Docker
 {
     public class StandardConfigHubDocker : IDocker
     {
-        private string BaseURL = null;
-        private string Token = null;
+        #region Constants
+        private const string NetworkFailureBaseMessage = "Network error for specified URI";
+        #endregion
 
-        public void Setup(string serverNameAndPort, string token, bool useHttps)
+        #region State
+        private string BaseURI = null;
+        private string PublishToken = null;
+        private string ReadToken = null;
+        #endregion
+
+        #region Setup
+        public void Setup(string serverNameAndPort, string readToken, string publishToken, bool useHttps)
         {
-            // Setup
-            BaseURL = (useHttps ? "https://" : "http://") + serverNameAndPort + "/Dock/";
-            Token = token;
-        }
+            // Validate
+            if (serverNameAndPort == null)
+            {
+                throw new CFGDockerException("Server and port cannot be null", null);
+            }
+            else if (readToken == null && publishToken == null)
+            {
+                throw new CFGDockerException("One or two tokens must be specified", null);
+            }
 
-        public List<string> Find(string configurationSearchPattern)
-        {
-            throw new NotImplementedException();
-        }
+            // Chop off http/https if its there
+            serverNameAndPort = serverNameAndPort.ToLower();
+            if (serverNameAndPort.StartsWith("http://"))
+            {
+                serverNameAndPort = serverNameAndPort.Replace("http://", "");
+            }
+            else if(serverNameAndPort.StartsWith("https://"))
+            {
+                serverNameAndPort = serverNameAndPort.Replace("https://", "");
+            }
 
-        public List<string> ListChildren(string ofConfigurationPath)
-        {
-            throw new NotImplementedException();
-        }
+            // Remove ending slash, if there
+            if (serverNameAndPort.EndsWith("/"))
+            {
+                serverNameAndPort = serverNameAndPort.Substring(0, serverNameAndPort.Length - 1);
+            }
 
+            // Build base URI
+            BaseURI = (useHttps ? "https://" : "http://") + serverNameAndPort + "/Dock/";
+
+            // Setup tokens
+            PublishToken = publishToken;
+            ReadToken = readToken;
+        }
+        #endregion
+
+        #region Merchant
         public string Ping()
         {
-            // Return ping result
-            try
+            // Build client
+            using (HttpClient client = new HttpClient())
             {
-                using (HttpClient client = new HttpClient())
+                // Client setup                
+                SetupClient(client, ReadToken);
+
+                // Service call
+                ServiceResponse response = null;
+                try
                 {
-                    client.DefaultRequestHeaders.Add("token", "25E9BDF2-DF1E-42BD-BD58-1CAFFDC554A2");
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));                    
-                    string rawResponse = client.GetAsync(BaseURL + "Ping").Result.Content.ReadAsStringAsync().Result;
-                    ServiceResponse response = JsonConvert.DeserializeObject<ServiceResponse>(rawResponse);
-                    if(response.Type == ResponseType.Error)
-                    {
-                        throw new CFGDockerException(response.Message, null);
-                    }
-                    else
-                    {
-                        return response.Message;
-                    }
+                    // Service transaction
+                    response = client.PostAsync<object>(
+                        BaseURI + "Ping", null,
+                        new JsonMediaTypeFormatter())
+                        .Result.Content.ReadAsAsync<ServiceResponse>().Result;
+                }
+                catch (Exception err)
+                {
+                    throw new CFGDockerException(NetworkFailureBaseMessage, err);
+                }
+
+                // Handle response
+                if (response.Type == ResponseType.Error)
+                {
+                    // Hand exception back
+                    throw new CFGDockerException(response.Message, null);
+                }
+                else
+                {
+                    // Hand response back
+                    return response.Message;
                 }
             }
-            catch(Exception err)
+        }
+
+        public void RegisterComponent(string componentName)
+        {
+            // Execute
+            ExecuteComponentQuery(componentName, "RegisterComponent", null);            
+        }
+
+        public void DeleteComponent(string componentName)
+        {
+            // Execute
+            ExecuteComponentQuery(componentName, "DeleteComponent", null);
+        }
+        #endregion
+
+        #region Cores
+        private void ExecuteComponentQuery(string componentNamePattern, string componentAction, string componentDescriptionPattern)
+        {
+            // Declare component definition
+            ComponentQuery thisComponentQuery = null;
+
+            // Build client
+            using (HttpClient client = new HttpClient())
             {
-                throw new CFGDockerException("Network error for URL '" + BaseURL + "Ping" + "'", err);
-            }           
-        }
+                // Client setup                
+                SetupClient(client, PublishToken);
 
-        public void Publish(string configurationPath, string configurationValue)
-        {
-            throw new NotImplementedException();
-        }
+                // Build component query
+                thisComponentQuery = new ComponentQuery();
+                thisComponentQuery.ComponentNamePattern = componentNamePattern;
+                thisComponentQuery.ComponentDescriptionPattern = componentDescriptionPattern;
 
-        public T Resolve<T>(string configurationPath)
-        {
-            throw new NotImplementedException();
+                // Service call
+                ServiceResponse response = null;
+                try
+                {
+                    // Service transaction
+                    response = client.PostAsync<ComponentQuery>(
+                        BaseURI + componentAction,
+                        thisComponentQuery,
+                        new JsonMediaTypeFormatter())
+                        .Result.Content.ReadAsAsync<ServiceResponse>().Result;
+                }
+                catch (Exception err)
+                {
+                    throw new CFGDockerException(NetworkFailureBaseMessage, err);
+                }
+
+                // Handle response
+                if (response.Type == ResponseType.Error)
+                {
+                    // Hand exception back
+                    throw new CFGDockerException(response.Message, null);
+                }
+            }
         }
+        private void SetupClient(HttpClient toSetup, string usingToken)
+        {
+            // Setup the client
+            toSetup.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            toSetup.DefaultRequestHeaders.Add("token", usingToken);
+        }
+        #endregion
     }
 }

@@ -10,14 +10,19 @@ namespace CFG.Hub.Controllers
     using System;
     using System.Configuration;
     using System.Collections.Generic;
-    using System.Linq;/// <summary>
-                      /// Configuration hub endpoint controller.
-                      /// </summary>
-                      /// <seealso cref="System.Web.Http.ApiController" />
+    using System.Linq;
+
     public class DockController : ApiController
     {
-        private static bool SendClientDebugMessage = false;
+        #region Constants
+        private const string PathAllowableCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_. "; 
+        #endregion
 
+        #region State
+        private static bool SendClientDebugMessage = false;
+        #endregion
+
+        #region Construction
         public DockController()
         {
             // Resolve SendClientDebugMessages flag
@@ -30,12 +35,10 @@ namespace CFG.Hub.Controllers
                 // Don't care
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Pings this instance.
-        /// </summary>
-        /// <returns>Pong Service Response</returns>
-        [Route("Dock/Ping"), HttpGet, ConfigHubAuthorize]
+        #region Diagnostics        
+        [Route("Dock/Ping"), HttpPost, ConfigHubAuthorize(ConfigHubAuthorize.ConfigHubClaims.Read)]
         public HttpResponseMessage Ping()
         {
             // Return pong response
@@ -48,104 +51,125 @@ namespace CFG.Hub.Controllers
                 return GenerateExceptionResponse("Unexpected failure" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Resolves a configuration value (always string).
-        /// </summary>
-        /// <returns>Specified value (always string)</returns>
-        [Route("Dock/Resolve"), HttpPost, ConfigHubAuthorize]
-        public HttpResponseMessage Resolve(string path)
+        #region Publishing
+        [Route("Dock/RegisterComponent"), HttpPost, ConfigHubAuthorize(ConfigHubAuthorize.ConfigHubClaims.Publish)]
+        public HttpResponseMessage RegisterComponent(ComponentQuery usingQuery)
         {
             try
             {
+                // Verify component name
+                if (usingQuery.ComponentNamePattern == null)
+                {
+                    return GenerateExceptionResponse("Component name cannot be null");
+                }
+
+                // Verify legal path
+                if (!VerifyPathIsLegal(usingQuery.ComponentNamePattern))
+                {
+                    return GenerateExceptionResponse("Illegal component name");
+                }
+
+                // Trim up
+                TrimUpComponentQuery(usingQuery);                                
+
                 // Build context
                 using (ConfigHubEFEntities context = new ConfigHubEFEntities())
                 {
-                    // Parse the path
-                    CFGHub_SystemComponent component = null;
-                    CFGHub_ConfigAtom configAtom = ResolveAtomOrBuild(path, context, out component);
-                    context.SaveChanges();
+                    // Validation
+                    if (context.CFGHub_SystemComponent.Where(item => item.Name == usingQuery.ComponentNamePattern).FirstOrDefault() != null)
+                    {
+                        return GenerateExceptionResponse("Component name '" + usingQuery.ComponentNamePattern + "' is already in use");
+                    }
+                    else
+                    {
+                        // Make key
+                        Guid uid = Guid.NewGuid();
 
-                    // Respond
-                    return GenerateSuccessResponse("Sending configuration atom '" + path + "'", configAtom.Value);
-                }                
-            }
-            catch (Exception err)
-            {
-                return GenerateExceptionResponse("Failed to find resolve path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
-            }
-        }
+                        // Add
+                        context.CFGHub_SystemComponent.Add(new CFGHub_SystemComponent()
+                        {
+                            ID = uid,
+                            Name = usingQuery.ComponentNamePattern
+                        });
 
-        /// <summary>
-        /// Publishes the specified path.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        [Route("Dock/Publish"), HttpPost, ConfigHubAuthorize]
-        public HttpResponseMessage Publish(string path, string value)
-        {
-            try
-            {
-                // Build context
-                using (ConfigHubEFEntities context = new ConfigHubEFEntities())
-                {
-                    // Parse the path
-                    CFGHub_SystemComponent component = null;
-                    CFGHub_ConfigAtom configAtom = ResolveAtomOrBuild(path, context, out component);
-                    configAtom.Value = value;
-                    context.CFGHub_ConfigAtom.Add(configAtom);
-                    context.SaveChanges();
+                        // Store
+                        context.SaveChanges();
+                    }                    
 
                     // Response
-                    return GenerateSuccessResponse("Publish succeeded", null);
-                }                
+                    return GenerateSuccessResponse("Publish succeeded", usingQuery);
+                }
             }
             catch (Exception err)
             {
-                return GenerateExceptionResponse("Failed to find publish path '" + path + "'" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
+                return GenerateExceptionResponse("Unexpected failure" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
             }
         }
 
-        /// <summary>
-        /// Lists the children for the specified path.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        [Route("Dock/ListChildren"), HttpPost, ConfigHubAuthorize]
-        public HttpResponseMessage ListChildren(string path)
+        [Route("Dock/DeleteComponent"), HttpPost, ConfigHubAuthorize(ConfigHubAuthorize.ConfigHubClaims.Publish)]
+        public HttpResponseMessage DeleteComponent(ComponentQuery usingQuery)
         {
-            return Request.CreateResponse(
-                HttpStatusCode.OK,
-                new ServiceResponse()
+            try
+            {
+                // Verify component name
+                if (usingQuery.ComponentNamePattern == null)
                 {
-                    Type = ResponseType.Success,
-                    Message = "Pong",
-                    Payload = null
-                });
-        }
+                    return GenerateExceptionResponse("Component name cannot be null");
+                }
 
-        /// <summary>
-        /// Lists the configuration atoms for the specified pattern (* is wildcard).
-        /// </summary>
-        /// <param name="pattern">The pattern.</param>
-        /// <returns></returns>
-        [Route("Dock/Find"), HttpPost, ConfigHubAuthorize]
-        public HttpResponseMessage Find(string pattern)
-        {
-            return Request.CreateResponse(
-                HttpStatusCode.OK,
-                new ServiceResponse()
+                // Verify legal path
+                if (!VerifyPathIsLegal(usingQuery.ComponentNamePattern))
                 {
-                    Type = ResponseType.Success,
-                    Message = "Pong",
-                    Payload = null
-                });
+                    return GenerateExceptionResponse("Illegal component name");
+                }
+
+                // Trim up
+                TrimUpComponentQuery(usingQuery);
+
+                // Build context
+                using (ConfigHubEFEntities context = new ConfigHubEFEntities())
+                {
+                    // Validation
+                    if (context.CFGHub_SystemComponent.Where(item => item.Name == usingQuery.ComponentNamePattern).FirstOrDefault() != null)
+                    {
+                        return GenerateExceptionResponse("Component name '" + usingQuery.ComponentNamePattern + "' is already in use");
+                    }
+                    else
+                    {
+                        // Make key
+                        Guid uid = Guid.NewGuid();
+
+                        // Add
+                        context.CFGHub_SystemComponent.Add(new CFGHub_SystemComponent()
+                        {
+                            ID = uid,
+                            Name = usingQuery.ComponentNamePattern
+                        });
+
+                        // Store
+                        context.SaveChanges();
+                    }
+
+                    // Response
+                    return GenerateSuccessResponse("Publish succeeded", usingQuery);
+                }
+            }
+            catch (Exception err)
+            {
+                return GenerateExceptionResponse("Unexpected failure" + (SendClientDebugMessage ? " - " + err.ToString() : ""));
+            }
         }
+        #endregion
+
+        #region Reading        
+        #endregion             
 
         #region Cores
         private HttpResponseMessage GenerateSuccessResponse(string message, object payload)
         {
+            // Build and return
             return Request.CreateResponse(
                 HttpStatusCode.OK,
                 new ServiceResponse()
@@ -153,10 +177,11 @@ namespace CFG.Hub.Controllers
                     Type = ResponseType.Success,
                     Message = message,
                     Payload = payload
-                });
+                }, "application/json");
         }
         private HttpResponseMessage GenerateExceptionResponse(string message)
         {
+            // Build and return
             return Request.CreateResponse(
                 HttpStatusCode.OK,
                 new ServiceResponse()
@@ -164,8 +189,40 @@ namespace CFG.Hub.Controllers
                     Type = ResponseType.Error,
                     Message = message,
                     Payload = null
-                });
+                }, "application/json");
         }
+        private void TrimUpComponentQuery(ComponentQuery query)
+        {
+            // Trim up name pattern
+            if (query.ComponentNamePattern != null)
+            {
+                query.ComponentNamePattern = query.ComponentNamePattern.Trim();
+            }
+
+            // Trim up description pattern
+            if (query.ComponentDescriptionPattern != null)
+            {
+                query.ComponentDescriptionPattern = query.ComponentDescriptionPattern.Trim();
+            }
+        }
+        private bool VerifyPathIsLegal(string path)
+        {
+            // Check path for illegals
+            if (path == null)
+            {
+                return true;
+            }
+            bool pathIsLegal = true;
+            path.ToList().ForEach((char characterInPath) =>
+            {
+                if (!PathAllowableCharacters.Contains(characterInPath))
+                {
+                    pathIsLegal = false;
+                }
+            });
+            return pathIsLegal;
+        }
+
         private CFGHub_ConfigAtom ResolveAtomOrBuild(string path, ConfigHubEFEntities context, out CFGHub_SystemComponent pathComponentResolve)
         {
             // Declare return atom
@@ -186,15 +243,18 @@ namespace CFG.Hub.Controllers
             {
                 if (currentAtom == null)
                 {
+                    // Resolve first atom
                     currentAtom = context.CFGHub_ConfigAtom
                         .Where(item => item.Name == componentName).FirstOrDefault();
                 }
                 else
                 {
+                    // Resolve first atom
                     currentAtom = context.CFGHub_ConfigAtom
                         .Where(item => item.ParentID == currentAtom.ID &&
                         item.Name == atomName).FirstOrDefault();
 
+                    // Check atom missing
                     if (currentAtom == null)
                     {
                         // Must have the tail to store
@@ -209,6 +269,7 @@ namespace CFG.Hub.Controllers
                         item.Name == tipAtomName).FirstOrDefault();
             if (tipAtom == null)
             {
+                // Build and return
                 tipAtom = new CFGHub_ConfigAtom()
                 {
                     ComponentID = pathComponentResolve.ID,
@@ -220,6 +281,7 @@ namespace CFG.Hub.Controllers
             }                
             else
             {
+                // Return
                 return tipAtom;
             }            
         }        

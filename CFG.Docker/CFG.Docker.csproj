@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="CFGDockerException.cs" />
     <Compile Include="IDocker.cs" />
+    <Compile Include="Models\ComponentQuery.cs" />
     <Compile Include="Models\ServiceResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardConfigHubDocker.cs" />

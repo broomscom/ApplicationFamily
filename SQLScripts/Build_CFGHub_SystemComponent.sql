@@ -8,9 +8,7 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[CFGHub_SystemComponent](
 	[ID] [uniqueidentifier] NOT NULL,
-	[Status] [varchar](1) NOT NULL,
 	[Name] [varchar](255) NOT NULL,
-	[Version] [varchar](255) NULL,
 	[Description] [text] NULL,
  CONSTRAINT [PK_CFGHub_SystemComponent] PRIMARY KEY CLUSTERED 
 (

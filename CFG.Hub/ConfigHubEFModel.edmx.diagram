@@ -5,10 +5,10 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="a96402b6a30740f497df5fa99f3de566" Name="Diagram1">
-        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_ConfigAtom" Width="3" PointX="4.125" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_SystemComponent" Width="2.375" PointX="0.75" PointY="1.125" IsExpanded="true" />
-        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" ManuallyRouted="false" />
-        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_ConfigAtom" Width="3.25" PointX="6" PointY="1.125" />
+        <EntityTypeShape EntityType="ConfigHubEFModel.CFGHub_SystemComponent" Width="3.25" PointX="0.875" PointY="1.25" />
+        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Component" />
+        <AssociationConnector Association="ConfigHubEFModel.FK_CFGHub_ConfigAtom_CFGHub_Parent" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
