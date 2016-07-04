@@ -8,7 +8,7 @@ namespace CFG.Docker.Tests
     [TestClass]
     public class DockerTests
     {
-        private bool UseProductionForTesting = false;
+        private bool UseProductionForTesting = true;
 
         [TestMethod]
         public void PingServiceTest()
@@ -79,11 +79,10 @@ namespace CFG.Docker.Tests
             //dockerInstance.PublishConfigurationAtom("Aaron.A.1.P", null);
             //dockerInstance.PublishConfigurationAtom("Aaron.A.1.B", null);
             //dockerInstance.PublishConfigurationAtom("Aaron.A.1.A", null);
-            dockerInstance.PublishConfigurationAtom("Aaron.A.1.F", "Actual Value");
+            //dockerInstance.PublishConfigurationAtom("Aaron.A.1.F", "Actual Value");
             //List<string> componentList = dockerInstance.ListComponents();
             List<string> output = dockerInstance.ListSubAtoms("Aaron");
             string value = dockerInstance.ResolveAtomAsString("Aaron.A.1.F");
-            value = dockerInstance.ResolveAtomAsString("Aaron.Fuck");
             value = dockerInstance.ResolveAtomAsString("Aaron.A.1.A");
             dockerInstance.ListSubAtoms("Aaron.A");
             output = dockerInstance.ListSubAtoms("Aaron.A.1");           
