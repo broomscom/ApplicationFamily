@@ -32,17 +32,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMConsole));
             this.ConsoleSplitContainer = new System.Windows.Forms.SplitContainer();
             this.trv_AtomTree = new System.Windows.Forms.TreeView();
+            this.cms_ConfigTreeMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmi_ConfigDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmi_ConfigRefresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmi_ConfigAddComponent = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmi_ConfigAddAtom = new System.Windows.Forms.ToolStripMenuItem();
             this.lbl_SelectToContinue = new System.Windows.Forms.Label();
             this.lbl_ReadOnlyLabel = new System.Windows.Forms.Label();
             this.txt_AtomValue = new System.Windows.Forms.TextBox();
             this.lbl_AtomValueLabel = new System.Windows.Forms.Label();
             this.txt_AtomPath = new System.Windows.Forms.TextBox();
             this.lbl_AtomPathLabel = new System.Windows.Forms.Label();
-            this.cms_ConfigTreeMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cmi_ConfigDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmi_ConfigRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmi_ConfigAddComponent = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmi_ConfigAddAtom = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.ConsoleSplitContainer)).BeginInit();
             this.ConsoleSplitContainer.Panel1.SuspendLayout();
             this.ConsoleSplitContainer.Panel2.SuspendLayout();
@@ -92,6 +92,44 @@
             this.trv_AtomTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.trv_AtomTree_BeforeSelect);
             this.trv_AtomTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trv_AtomTree_AfterSelect);
             this.trv_AtomTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.trv_AtomTree_NodeMouseClick);
+            // 
+            // cms_ConfigTreeMenu
+            // 
+            this.cms_ConfigTreeMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmi_ConfigDelete,
+            this.cmi_ConfigRefresh,
+            this.cmi_ConfigAddComponent,
+            this.cmi_ConfigAddAtom});
+            this.cms_ConfigTreeMenu.Name = "cms_ConfigTreeMenu";
+            this.cms_ConfigTreeMenu.Size = new System.Drawing.Size(169, 92);
+            // 
+            // cmi_ConfigDelete
+            // 
+            this.cmi_ConfigDelete.Name = "cmi_ConfigDelete";
+            this.cmi_ConfigDelete.Size = new System.Drawing.Size(168, 22);
+            this.cmi_ConfigDelete.Text = "Delete";
+            this.cmi_ConfigDelete.Click += new System.EventHandler(this.cmi_ConfigDelete_Click);
+            // 
+            // cmi_ConfigRefresh
+            // 
+            this.cmi_ConfigRefresh.Name = "cmi_ConfigRefresh";
+            this.cmi_ConfigRefresh.Size = new System.Drawing.Size(168, 22);
+            this.cmi_ConfigRefresh.Text = "Refresh";
+            this.cmi_ConfigRefresh.Click += new System.EventHandler(this.cmi_ConfigRefresh_Click);
+            // 
+            // cmi_ConfigAddComponent
+            // 
+            this.cmi_ConfigAddComponent.Name = "cmi_ConfigAddComponent";
+            this.cmi_ConfigAddComponent.Size = new System.Drawing.Size(168, 22);
+            this.cmi_ConfigAddComponent.Text = "Add Component";
+            this.cmi_ConfigAddComponent.Click += new System.EventHandler(this.cmi_ConfigAddComponent_Click);
+            // 
+            // cmi_ConfigAddAtom
+            // 
+            this.cmi_ConfigAddAtom.Name = "cmi_ConfigAddAtom";
+            this.cmi_ConfigAddAtom.Size = new System.Drawing.Size(168, 22);
+            this.cmi_ConfigAddAtom.Text = "Add Config Atom";
+            this.cmi_ConfigAddAtom.Click += new System.EventHandler(this.cmi_ConfigAddAtom_Click);
             // 
             // lbl_SelectToContinue
             // 
@@ -164,44 +202,6 @@
             this.lbl_AtomPathLabel.TabIndex = 0;
             this.lbl_AtomPathLabel.Text = "Atom Path";
             this.lbl_AtomPathLabel.Visible = false;
-            // 
-            // cms_ConfigTreeMenu
-            // 
-            this.cms_ConfigTreeMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmi_ConfigDelete,
-            this.cmi_ConfigRefresh,
-            this.cmi_ConfigAddComponent,
-            this.cmi_ConfigAddAtom});
-            this.cms_ConfigTreeMenu.Name = "cms_ConfigTreeMenu";
-            this.cms_ConfigTreeMenu.Size = new System.Drawing.Size(169, 114);
-            // 
-            // cmi_ConfigDelete
-            // 
-            this.cmi_ConfigDelete.Name = "cmi_ConfigDelete";
-            this.cmi_ConfigDelete.Size = new System.Drawing.Size(168, 22);
-            this.cmi_ConfigDelete.Text = "Delete";
-            this.cmi_ConfigDelete.Click += new System.EventHandler(this.cmi_ConfigDelete_Click);
-            // 
-            // cmi_ConfigRefresh
-            // 
-            this.cmi_ConfigRefresh.Name = "cmi_ConfigRefresh";
-            this.cmi_ConfigRefresh.Size = new System.Drawing.Size(168, 22);
-            this.cmi_ConfigRefresh.Text = "Refresh";
-            this.cmi_ConfigRefresh.Click += new System.EventHandler(this.cmi_ConfigRefresh_Click);
-            // 
-            // cmi_ConfigAddComponent
-            // 
-            this.cmi_ConfigAddComponent.Name = "cmi_ConfigAddComponent";
-            this.cmi_ConfigAddComponent.Size = new System.Drawing.Size(168, 22);
-            this.cmi_ConfigAddComponent.Text = "Add Component";
-            this.cmi_ConfigAddComponent.Click += new System.EventHandler(this.cmi_ConfigAddComponent_Click);
-            // 
-            // cmi_ConfigAddAtom
-            // 
-            this.cmi_ConfigAddAtom.Name = "cmi_ConfigAddAtom";
-            this.cmi_ConfigAddAtom.Size = new System.Drawing.Size(168, 22);
-            this.cmi_ConfigAddAtom.Text = "Add Config Atom";
-            this.cmi_ConfigAddAtom.Click += new System.EventHandler(this.cmi_ConfigAddAtom_Click);
             // 
             // FRMConsole
             // 

@@ -235,6 +235,13 @@ namespace CFG.DesktopConsole
                 try
                 {
                     // Register atom
+                    foreach (TreeNode nestedNode in trv_AtomTree.SelectedNode.Nodes)
+                    {
+                        if (nestedNode.Text.Trim().ToLower() == entryForm.EnteredName.Trim().ToLower())
+                        {
+                            throw new Exception("Cannot add duplicate atom name '" + entryForm.EnteredName.Trim() + "'");
+                        }
+                    }
                     DockerClient.PublishConfigurationAtom(trv_AtomTree.SelectedNode.Tag.ToString() + "." + entryForm.EnteredName.Trim(), null);
                     TreeNode node = new TreeNode();
                     node.Text = entryForm.EnteredName.Trim();
