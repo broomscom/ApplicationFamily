@@ -10,6 +10,45 @@ namespace CFG.Docker.Tests
     {
         private bool UseProductionForTesting = true;
 
+        public enum TestEnum { OptionA, OptionB };
+
+        public interface IAnimal
+        {
+            string Speak();
+        }
+
+        public class Dog : IAnimal
+        {
+            public string Speak()
+            {
+                return "Woof";
+            }
+        }
+
+        public class Cat : IAnimal
+        {
+            public string Speak()
+            {
+                return "Mow";
+            }
+        }
+
+        [TestMethod]
+        public void ResolutionTests()
+        {
+            // Create DOCKER instance
+            IDocker dockerInstance = BuildStandardDockerInstance();
+
+            DateTime dateTimeValue = dockerInstance.Resolve<DateTime>("Beta.Juice.DateTimeValue");
+            int intValue = dockerInstance.Resolve<int>("Beta.Juice.IntegerValue");
+            double doubleValue = dockerInstance.Resolve<double>("Beta.Juice.DoubleValue");
+            TestEnum testEnum = dockerInstance.Resolve<TestEnum>("Beta.Juice.EnumValue");
+            IAnimal injection = dockerInstance.Resolve<IAnimal>("Beta.Juice.ObjectResolver");
+            string result = injection.Speak();
+            OutsideInjection.IAnimal outsideInjected = dockerInstance.Resolve<OutsideInjection.IAnimal>("Beta.Juice.ExternalObjectResolver");
+            result = outsideInjected.Speak();
+        }
+
         [TestMethod]
         public void PingServiceTest()
         {

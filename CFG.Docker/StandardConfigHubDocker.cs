@@ -8,6 +8,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace CFG.Docker
 {
@@ -114,10 +115,69 @@ namespace CFG.Docker
             // Execute
             string resolvedString = ResolveAtomAsString(atomPath);
 
-            // Super resolver
+            // Default for nulls
+            if (resolvedString == null || resolvedString.Trim() == "")
+            {
+                return default(T);
+            }
 
+            // String are string
+            if (typeof(T) == typeof(string))
+            {
+                throw new CFGDockerException("For strings just use ResolveAtomAsString instead", null); 
+            }
 
-            return default(T);
+            // Parse router
+            try
+            {
+                // Parse ENUM
+                return (T)Enum.Parse(typeof(T), resolvedString);
+            }
+            catch
+            {
+                // Try parse first
+                try
+                {
+                    // Look for try parse
+                    foreach (MethodInfo info in typeof(T).GetMethods())
+                    {
+                        if (info.Name == "Parse")
+                        {
+                            object[] values = new object[1];
+                            values[0] = resolvedString as object;
+                            T parsedValue = (T)info.Invoke(null, values);
+                            return parsedValue;
+                        }
+                    }
+
+                    // Try object resolution
+                    throw new Exception("Trigger object resolution");
+                }
+                catch
+                {
+                    try
+                    {
+                        // Resolve injection
+                        if (resolvedString.Contains(","))
+                        {
+                            // Resolve from within caller assembly
+                            Assembly externalAssembly = Assembly.LoadFile(resolvedString.Split(',')[1].Trim());
+                            return (T)Activator.CreateInstance(externalAssembly.GetTypes().Where(item => item.FullName == resolvedString.Split(',')[0]).FirstOrDefault());                            
+                        }
+                        else
+                        {
+                            // Resolve from assembly on disk                                                     
+                            return (T)Activator.CreateInstance(Assembly.GetAssembly(typeof(T)).GetType(resolvedString));
+                        }
+                    }
+                    catch (Exception err)
+                    {
+                        // Report failure to resolve
+                        string typeName = typeof(T).GetType().ToString();
+                        throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as type '" + typeName + "'", err);
+                    }
+                }
+            }
         }
         #endregion
 
