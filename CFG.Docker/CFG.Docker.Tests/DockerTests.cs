@@ -45,8 +45,8 @@ namespace CFG.Docker.Tests
             TestEnum testEnum = dockerInstance.Resolve<TestEnum>("Beta.Juice.EnumValue");
             IAnimal injection = dockerInstance.Resolve<IAnimal>("Beta.Juice.ObjectResolver");
             string result = injection.Speak();
-            OutsideInjection.IAnimal outsideInjected = dockerInstance.Resolve<OutsideInjection.IAnimal>("Beta.Juice.ExternalObjectResolver");
-            result = outsideInjected.Speak();
+            //OutsideInjection.IAnimal outsideInjected = dockerInstance.Resolve<OutsideInjection.IAnimal>("Beta.Juice.ExternalObjectResolver");
+            //result = outsideInjected.Speak();
         }
 
         [TestMethod]
