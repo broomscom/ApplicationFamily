@@ -121,7 +121,7 @@ namespace CFG.Docker
                 return default(T);
             }
 
-            // String are string
+            // Strings are strings
             if (typeof(T) == typeof(string))
             {
                 throw new CFGDockerException("For strings just use ResolveAtomAsString instead", null); 
@@ -150,34 +150,59 @@ namespace CFG.Docker
                         }
                     }
 
-                    // Try object resolution
-                    throw new Exception("Trigger object resolution");
+                    // Not found exception
+                    string typeName = typeof(T).GetType().ToString();
+                    throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as type '" + typeName + "'.  No suitable parse method could be found", null);
                 }
-                catch
+                catch (Exception err)
                 {
-                    try
-                    {
-                        // Resolve injection
-                        if (resolvedString.Contains(","))
-                        {
-                            // Resolve from within caller assembly
-                            Assembly externalAssembly = Assembly.LoadFile(resolvedString.Split(',')[1].Trim());
-                            return (T)Activator.CreateInstance(externalAssembly.GetTypes().Where(item => item.FullName == resolvedString.Split(',')[0]).FirstOrDefault());                            
-                        }
-                        else
-                        {
-                            // Resolve from assembly on disk                                                     
-                            return (T)Activator.CreateInstance(Assembly.GetAssembly(typeof(T)).GetType(resolvedString));
-                        }
-                    }
-                    catch (Exception err)
-                    {
-                        // Report failure to resolve
-                        string typeName = typeof(T).GetType().ToString();
-                        throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as type '" + typeName + "'", err);
-                    }
+                    // Report failure to resolve
+                    string typeName = typeof(T).GetType().ToString();
+                    throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as type '" + typeName + "'", err);
                 }
             }
+        }
+        public T ResolveInternalInstance<T>(string atomPath)
+        {
+            // Execute
+            string resolvedString = ResolveAtomAsString(atomPath);            
+
+            try
+            {
+                // Resolve from assembly on disk                                                     
+                return (T) Activator.CreateInstance(Assembly.GetAssembly(typeof(T)).GetType(resolvedString));
+            }
+            catch (Exception err)
+            {
+                // Report failure to resolve
+                string typeName = typeof(T).GetType().ToString();
+                throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as internal type '" + typeName + "'", err);
+            }
+        }
+        public T ResolveExternalInstance<T>(string atomPath, out AppDomain generatedDomain)
+        {
+            // Execute
+            string resolvedString = ResolveAtomAsString(atomPath);
+
+            // Default generated domain
+            generatedDomain = null;
+
+            try
+            {
+                // Resolve from within caller assembly            
+                return (T) AppDomainBuilder.ResolveInstance<T>(resolvedString.Split(',')[0].Trim(), resolvedString.Split(',')[1].Trim(), out generatedDomain);
+            }
+            catch (Exception err)
+            {
+                // Report failure to resolve
+                string typeName = typeof(T).GetType().ToString();
+                throw new CFGDockerException("The atom '" + atomPath + "' is not resolvable as external type '" + typeName + "'.  Make sure the DLL exists and fully qualified type name is correct.", err);
+            }
+        }
+        public void ReleaseExternalInstance(object instance, AppDomain domain)
+        {
+            // Unload
+            AppDomainBuilder.UnloadInstance(domain, instance);
         }
         #endregion
 
