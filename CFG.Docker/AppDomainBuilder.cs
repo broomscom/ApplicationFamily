@@ -1,4 +1,5 @@
-﻿namespace CFG.Docker
+﻿
+namespace CFG.Docker
 {
     using System;
     using System.Globalization;
@@ -95,7 +96,7 @@
             // Validation - Verify DLL exists
             if (!File.Exists(dllLocationOnDisk))
             {
-                throw new AppDomainBuilderException("The DLL '" + dllLocationOnDisk + "' does not exist on disk");
+                throw new CFGDockerException("The DLL '" + dllLocationOnDisk + "' does not exist on disk", null);
             }
 
             // Validation - Verify access to DLL
@@ -105,7 +106,7 @@
             }
             catch (Exception err)
             {
-                throw new AppDomainBuilderException("The DLL '" + dllLocationOnDisk + "' exists on disk, but cannot be accessed", err);
+                throw new CFGDockerException("The DLL '" + dllLocationOnDisk + "' exists on disk, but cannot be accessed", err);
             }
 
             // Build new AppDomain to house instance
@@ -123,7 +124,7 @@
             }
             catch (Exception err)
             {
-                throw new AppDomainBuilderException("Unexpected failure building AppDomain for assembly '" + dllLocationOnDisk + "'", err);
+                throw new CFGDockerException("Unexpected failure building AppDomain for assembly '" + dllLocationOnDisk + "'", err);
             }
 
             // Build new instance housed in new AppDomain
@@ -142,7 +143,7 @@
             }
             catch (Exception err)
             {
-                throw new AppDomainBuilderException("Unexpected failure building Instance from generated AppDomain for assembly '" + dllLocationOnDisk + "' of type '" + instanceNameWithNameSpace + "'", err);
+                throw new CFGDockerException("Unexpected failure building Instance from generated AppDomain for assembly '" + dllLocationOnDisk + "' of type '" + instanceNameWithNameSpace + "'", err);
             }
 
             // Return instance
@@ -154,11 +155,11 @@
             {
                 try
                 {
-                    throw new AppDomainBuilderException("Unexpected failure casting Instance to type '" + instanceNameWithNameSpace + "' to a '" + typeof(T).FullName + "' from generated AppDomain for assembly '" + dllLocationOnDisk + "' of type '" + instanceNameWithNameSpace + "'", err);
+                    throw new CFGDockerException("Unexpected failure casting Instance to type '" + instanceNameWithNameSpace + "' to a '" + typeof(T).FullName + "' from generated AppDomain for assembly '" + dllLocationOnDisk + "' of type '" + instanceNameWithNameSpace + "'", err);
                 }
                 catch (Exception innerErr)
                 {
-                    throw new AppDomainBuilderException("Unexpected unknown failure casting  for assembly '" + dllLocationOnDisk + "' with type '" + instanceNameWithNameSpace + "'", innerErr);
+                    throw new CFGDockerException("Unexpected unknown failure casting  for assembly '" + dllLocationOnDisk + "' with type '" + instanceNameWithNameSpace + "'", innerErr);
                 }
             }
         }
